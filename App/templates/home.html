@@ -1,0 +1,264 @@
+<!-- App/templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: left;
+        }
+
+        /* Container for dropdowns, centered with space between them */
+        .dropdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Group styling for each dropdown (course, section, location) */
+        .dropdown-group {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+        }
+
+        /* Label styling for dropdowns */
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Styling for the dropdowns */
+        select {
+            padding: 5px;
+            width: 200px;
+        }
+
+        /* Container for buttons, centered with spacing between them */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px auto;
+        }
+
+        /* Button styling */
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Responsive table container */
+        .table-responsive {
+            display: block;
+            width: fit-content;
+            margin: 70px auto 0;
+        }
+
+        /* Table styling */
+        .table {
+            font-size: 16px;
+            width: 100%;
+        }
+
+        /* Styling for table cells */
+        .table td,
+        .table th {
+            padding: 10px 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>COURSE MANAGEMENT SYSTEM</h1>
+
+    <!-- Form to handle course selection and actions -->
+    <form method="post">
+        {% csrf_token %}
+        <!-- Container for the course, section, and location dropdowns -->
+        <div class="dropdown-container">
+            <div class="dropdown-group">
+                <label for="course">Select Course:</label>
+                <select name="course" id="course">
+                    {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.course_code }} - {{ course.course_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="dropdown-group">
+                <label for="section">Select Section:</label>
+                <select name="section" id="section">
+                    {% for section in sections %}
+                    <option value="{{ section.id }}">
+                        {{ section.course.course_code }} - Section {{ section.section_number }} 
+                        ({{ section.days_of_week }} {{ section.start_time|time:"g:i A" }} - {{ section.end_time|time:"g:i A" }})
+                    </option>                    
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Dropdown for selecting a location -->
+            <div class="dropdown-group">
+                <label for="location">Select Location:</label>
+                <select name="location" id="location">
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.building_name }} {{ location.room_number }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Buttons for adding/removing courses and generating the timetable -->
+        <div class="button-container">
+            <button type="submit" name="action" value="add" class="add-course-button">Add Course</button>
+            <button type="submit" name="action" value="remove">Remove Course</button>
+            <button type="submit" name="action" value="generate">Generate Timetable</button>
+        </div>
+
+        <!-- Table for displaying the timetable -->
+        <div class="table-responsive">
+            <table class="table table-bordered text-center" style="border-collapse: collapse;">
+                <thead>
+                    <tr class="bg-light-gray">
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Time</th>
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Monday</th>
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Tuesday</th>
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Wednesday</th>
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Thursday</th>
+                        <th class="text-uppercase" style="border: 1px solid #ccc;">Friday</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="border: 1px solid #ccc;">09:00am</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">10:00am</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">11:00am</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">12:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">01:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">02:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">03:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">04:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                    <tr><td style="border: 1px solid #ccc;">05:00pm</td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td><td style="border: 1px solid #ccc;"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <!-- JavaScript to handle the course addition logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const addButton = document.querySelector(".add-course-button");
+            
+            // Event listener for adding a course
+            addButton.addEventListener("click", function(event) {
+                event.preventDefault();
+                
+                // Get the text of the selected course and section
+                const courseSelect = document.getElementById("course");
+                const sectionSelect = document.getElementById("section");
+                
+                // Get the text of the selected course and section
+                const selectedCourseText = courseSelect.options[courseSelect.selectedIndex].text;
+                const selectedSectionText = sectionSelect.options[sectionSelect.selectedIndex].text;
+    
+                // Extract days and time from section text
+                const match = selectedSectionText.match(/\((.*?) (\d{1,2}:\d{2} [AP]M) - (\d{1,2}:\d{2} [AP]M)\)/);
+                if (!match) {
+                    alert("Could not parse section time info.");
+                    return;
+                }
+    
+                const daysStr = match[1]; // MWF, TTh, etc.
+                const startTimeStr = match[2]; // e.g., 09:00 AM
+                const endTimeStr = match[3];   // e.g., 10:00 AM
+                
+                // Function to convert 12-hour time to minutes since midnight
+                const formatTime = (timeStr) => {
+                    const [time, period] = timeStr.split(" ");
+                    let [hour, minute] = time.split(":").map(Number);
+                    if (period === "PM" && hour !== 12) hour += 12;
+                    if (period === "AM" && hour === 12) hour = 0;
+                    // minutes since midnight
+                    return hour * 60 + minute; 
+                };
+                
+                // Function to parse the days string into an array of individual days
+                const parseDays = (str) => {
+                    const days = [];
+                    let i = 0;
+                    while (i < str.length) {
+                        if (str[i] === 'T' && str[i + 1] === 'h') {
+                            days.push('Th');
+                            i += 2;
+                        } else {
+                            days.push(str[i]);
+                            i++;
+                        }
+                    }
+                    return days;
+                };
+                
+                // Convert start and end times to minutes since midnight
+                // e.g., "09:00 AM" -> 540 minutes
+                const startTime = formatTime(startTimeStr);
+                const endTime = formatTime(endTimeStr);
+                
+                // Map days of the week to corresponding column index in the timetable
+                const dayMap = {
+                    M: 1,
+                    T: 2,
+                    W: 3,
+                    Th: 4,
+                    F: 5
+                };
+                
+                // Select all table rows containing time slots
+                const rows = document.querySelectorAll(".table tbody tr");
+
+                // Iterate through each row (time slot) in the timetable
+                rows.forEach(row => {
+                    const timeLabel = row.children[0].textContent.trim();
+                    const matchTime = timeLabel.match(/(\d{1,2}):(\d{2})(am|pm)/i);
+                    if (!matchTime) return;
+    
+                    let hour = parseInt(matchTime[1]);
+                    const minute = parseInt(matchTime[2]);
+                    const period = matchTime[3].toLowerCase();
+                    
+                    // Convert PM to 24-hour format
+                    // e.g., 1:00 PM -> 13:00
+                    if (period === 'pm' && hour !== 12) hour += 12;
+
+                     // Convert AM (12 AM is midnight)
+                    // e.g., 12:00 AM -> 0:00
+                    if (period === 'am' && hour === 12) hour = 0;
+    
+                    const rowMinutes = hour * 60 + minute;
+                    
+                     // Check if the row's time is within the selected course's time range
+                    if (rowMinutes >= startTime && rowMinutes < endTime) {
+                        for (const day of parseDays(daysStr)) {
+                            const colIndex = dayMap[day];
+                            if (colIndex && row.children[colIndex]) {
+                                row.children[colIndex].textContent = selectedCourseText;
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    
+    
+    
+
+
+</body>
+</html>
